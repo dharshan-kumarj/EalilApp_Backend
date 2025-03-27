@@ -1,5 +1,5 @@
 
-# Telecare Authentication API Documentation
+# Ealil API Documentation
 
 This document provides details about the authentication endpoints for the Telecare application.
 
@@ -249,7 +249,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 curl -X GET https://api.selfmade.plus/auth/profile \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
+```
 
 ## Location Tracking Endpoints
 
