@@ -451,4 +451,244 @@ if ('geolocation' in navigator) {
 - `401 Unauthorized`: Authentication failed or token is invalid/expired
 - `403 Forbidden`: User does not have permission to perform the action
 - `500 Internal Server Error`: Something went wrong on the server
+
+
+## Medical Data Endpoints
+
+### 1. Get Own Medical Data
+
+Retrieves the current patient's medical information.
+
+- **URL**: `/medical-data`
+- **Method**: `GET`
+- **Authorization**: Bearer Token (JWT obtained from login/register)
+
+#### Example Request
+
+```
+GET /medical-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Content-Type**: `application/json`
+
+```json
+{
+  "id": "m1d2e3f4-g5h6-i7j8-k9l0-mnopqr123456",
+  "patientId": "p1q2r3s4-t5u6-v7w8-x9y0-zabcdef12345",
+  "bloodType": "O+",
+  "height": 175,
+  "weight": 70,
+  "allergies": ["Penicillin", "Peanuts"],
+  "chronicConditions": ["Asthma"],
+  "currentMedications": [
+    {
+      "name": "Albuterol",
+      "dosage": "90mcg",
+      "frequency": "As needed",
+      "purpose": "Asthma relief"
+    }
+  ],
+  "emergencyContactName": "Jane Smith",
+  "emergencyContactPhone": "9876543210",
+  "emergencyContactRelation": "Spouse",
+  "notes": "Mild asthma, usually triggered by exercise and pollen.",
+  "createdAt": "2025-03-27T17:16:55.000Z",
+  "updatedAt": "2025-03-27T17:48:13.000Z",
+  "medicalRecords": [
+    {
+      "id": "r1e2c3o4-r5d6-k7l8-m9n0-opqrst123456",
+      "medicalDataId": "m1d2e3f4-g5h6-i7j8-k9l0-mnopqr123456",
+      "recordType": "Doctor Visit",
+      "date": "2025-03-20T14:30:00.000Z",
+      "doctorName": "Dr. Johnson",
+      "diagnosis": "Common cold",
+      "prescription": "Rest and fluids",
+      "notes": "Follow up in one week if symptoms persist",
+      "attachmentUrl": null,
+      "createdAt": "2025-03-20T15:45:00.000Z",
+      "updatedAt": "2025-03-20T15:45:00.000Z"
+    }
+  ]
+}
+```
+
+### 2. Update Patient Medical Data
+
+Updates a patient's medical information in the system.
+
+- **URL**: `/medical-data/update`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+- **Authorization**: Bearer Token (JWT obtained from login/register)
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| bloodType | string | No | Patient's blood type (e.g., "A+", "O-") |
+| height | number | No | Height in centimeters |
+| weight | number | No | Weight in kilograms |
+| allergies | string[] | No | List of allergies |
+| chronicConditions | string[] | No | List of chronic conditions |
+| currentMedications | object[] | No | List of medications with dosage information |
+| emergencyContactName | string | No | Name of emergency contact |
+| emergencyContactPhone | string | No | Phone number of emergency contact |
+| emergencyContactRelation | string | No | Relationship to emergency contact |
+| notes | string | No | Additional notes about medical condition |
+
+#### Example Request
+
+```json
+POST /medical-data/update
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+{
+  "bloodType": "O+",
+  "height": 175,
+  "weight": 70,
+  "allergies": ["Penicillin", "Peanuts"],
+  "chronicConditions": ["Asthma"],
+  "currentMedications": [
+    {
+      "name": "Albuterol",
+      "dosage": "90mcg",
+      "frequency": "As needed",
+      "purpose": "Asthma relief"
+    }
+  ],
+  "emergencyContactName": "Jane Smith",
+  "emergencyContactPhone": "9876543210",
+  "emergencyContactRelation": "Spouse",
+  "notes": "Mild asthma, usually triggered by exercise and pollen."
+}
+```
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Content-Type**: `application/json`
+
+```json
+{
+  "id": "m1d2e3f4-g5h6-i7j8-k9l0-mnopqr123456",
+  "patientId": "p1q2r3s4-t5u6-v7w8-x9y0-zabcdef12345",
+  "bloodType": "O+",
+  "height": 175,
+  "weight": 70,
+  "allergies": ["Penicillin", "Peanuts"],
+  "chronicConditions": ["Asthma"],
+  "currentMedications": [
+    {
+      "name": "Albuterol",
+      "dosage": "90mcg",
+      "frequency": "As needed",
+      "purpose": "Asthma relief"
+    }
+  ],
+  "emergencyContactName": "Jane Smith",
+  "emergencyContactPhone": "9876543210",
+  "emergencyContactRelation": "Spouse",
+  "notes": "Mild asthma, usually triggered by exercise and pollen.",
+  "updatedAt": "2025-03-27T18:30:45.000Z"
+}
+```
+
+### 3. Get Patient Medical Data (Caretakers Only)
+
+Allows caretakers to view a patient's medical information.
+
+- **URL**: `/medical-data/patient/:patientId`
+- **Method**: `GET`
+- **Authorization**: Bearer Token (JWT obtained from login/register)
+
+#### Example Request
+
+```
+GET /medical-data/patient/p1q2r3s4-t5u6-v7w8-x9y0-zabcdef12345
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Success Response
+
+Same format as the "Get Own Medical Data" endpoint.
+
+### 4. Add Medical Record
+
+Adds a new medical record entry to a patient's history.
+
+- **URL**: `/medical-data/records/:patientId`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+- **Authorization**: Bearer Token (JWT obtained from login/register)
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| recordType | string | Yes | Type of medical record (e.g., "Doctor Visit") |
+| date | string | Yes | Date of the record (ISO format) |
+| doctorName | string | No | Name of the attending doctor |
+| diagnosis | string | No | Diagnosis provided |
+| prescription | string | No | Prescribed treatment |
+| notes | string | No | Additional notes |
+| attachmentUrl | string | No | URL to any attached files/documents |
+
+#### Example Request
+
+```json
+POST /medical-data/records/p1q2r3s4-t5u6-v7w8-x9y0-zabcdef12345
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+{
+  "recordType": "Doctor Visit",
+  "date": "2025-03-27T10:00:00.000Z",
+  "doctorName": "Dr. Smith",
+  "diagnosis": "Seasonal allergies",
+  "prescription": "Cetirizine 10mg daily",
+  "notes": "Patient reported itchy eyes and runny nose"
+}
+```
+
+#### Success Response
+
+- **Status Code**: `201 Created`
+- **Content-Type**: `application/json`
+
+```json
+{
+  "id": "r1e2c3o4-r5d6-k7l8-m9n0-opqrst789012",
+  "medicalDataId": "m1d2e3f4-g5h6-i7j8-k9l0-mnopqr123456",
+  "recordType": "Doctor Visit",
+  "date": "2025-03-27T10:00:00.000Z",
+  "doctorName": "Dr. Smith",
+  "diagnosis": "Seasonal allergies",
+  "prescription": "Cetirizine 10mg daily",
+  "notes": "Patient reported itchy eyes and runny nose",
+  "attachmentUrl": null,
+  "createdAt": "2025-03-27T17:48:13.000Z",
+  "updatedAt": "2025-03-27T17:48:13.000Z"
+}
+```
+
+## Implementation Notes
+
+The medical data module provides:
+
+1. A way for patients to store and update their medical information
+2. Storage for vital medical data like blood type, allergies, and medications
+3. A medical records system for tracking doctor visits and other medical events
+4. Access controls so that patients can access their own data, and caretakers can access data for their patients
+5. Structured storage of complex medical information in a queryable format
+
+This implementation allows you to:
+- Build comprehensive patient profiles
+- Track medical history over time
+- Provide critical information to caretakers
+- Keep an accurate record of medications and treatments
+
+All data is stored securely in your PostgreSQL database and can only be accessed by authorized users.
 ```
