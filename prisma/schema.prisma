@@ -36,6 +36,7 @@ model Patient {
   longitude   Float?
   lastLocationUpdate DateTime?
   locationHistory  LocationHistory[]
+  medicalData     MedicalData?  
 }
 
 model Caretaker {
@@ -54,6 +55,56 @@ model LocationHistory {
   latitude    Float
   longitude   Float
   timestamp   DateTime  @default(now())
+}
+
+// Add these models to your existing schema
+
+model MedicalData {
+  id                String   @id @default(uuid())
+  patientId         String   @unique
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  // Basic information
+  bloodType         String?
+  height            Float?   // in centimeters
+  weight            Float?   // in kilograms
+  allergies         String?  // JSON string of allergies
+  
+  // Medical conditions and medications
+  chronicConditions String?  // JSON string of chronic conditions
+  currentMedications String?  // JSON string of current medications
+  
+  // Emergency information
+  emergencyContactName    String?
+  emergencyContactPhone   String?
+  emergencyContactRelation String?
+  
+  // Additional fields
+  notes             String? @db.Text
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Medical records
+  medicalRecords    MedicalRecord[]
+}
+
+model MedicalRecord {
+  id           String     @id @default(uuid())
+  medicalDataId String
+  medicalData  MedicalData @relation(fields: [medicalDataId], references: [id], onDelete: Cascade)
+  
+  recordType   String     // e.g., "Doctor Visit", "Lab Test", "Hospitalization"
+  date         DateTime
+  doctorName   String?
+  diagnosis    String?
+  prescription String?
+  notes        String?    @db.Text
+  attachmentUrl String?
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 enum Role {
