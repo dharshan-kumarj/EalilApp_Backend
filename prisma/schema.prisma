@@ -31,6 +31,11 @@ model Patient {
   address     String
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Add these new fields
+  latitude    Float?
+  longitude   Float?
+  lastLocationUpdate DateTime?
+  locationHistory  LocationHistory[]
 }
 
 model Caretaker {
@@ -39,6 +44,16 @@ model Caretaker {
   phoneNumber String
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// New model to store location history
+model LocationHistory {
+  id          String    @id @default(uuid())
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  latitude    Float
+  longitude   Float
+  timestamp   DateTime  @default(now())
 }
 
 enum Role {
